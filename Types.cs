@@ -20,12 +20,6 @@ namespace PathFinding
         Dijkstra,
         AStar
     }
-    enum Status : byte
-    {
-        Running,
-        Paused,
-        Stopped
-    }
     struct Cell
     {
         public int xIndex;

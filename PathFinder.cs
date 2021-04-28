@@ -61,7 +61,7 @@ namespace PathFinding
         public List<Cell> path;
         private Thread searchingThread;
         public PathFinder() { }
-        public PathFinder(Cell start, Cell finish, Map[,] map, AlgType algorithm , int WaitTimeOut)
+        public PathFinder(Cell start, Cell finish, Map[,] map, AlgType algorithm)
         {
             
             OpenList = new List<Map>(100);
@@ -70,7 +70,6 @@ namespace PathFinding
             this.finish = finish;
             this.map = map;
             this.algorithm = algorithm;
-            this.waitTimeOut = WaitTimeOut;
             searchingThread = new Thread(this.Run);
             searchingThread.Name = "Path searching thread";
             searchingThread.Start();

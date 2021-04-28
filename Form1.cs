@@ -18,7 +18,6 @@ namespace PathFinding
         delegate void SetCallback(Cell cl1, Cell cl2, float penWidth);
         delegate void SetCallbackList(Cell cl, Color c);
         delegate void SetCallbackButtonCondition(Button btn, bool condition);
-        delegate void SetCallbackText(Status status);
         delegate void SetCallbackData(List<Cell> path);
         #endregion
         //Форма с установками параметров новой карты :
@@ -41,7 +40,6 @@ namespace PathFinding
         private Cell start, finish;
         private  Map[,] map;
         private Cell nullCell;
-        private Status pathFindingStatus;
         
         // Координаты старта и финиша в пикселях
         private Point startCoord, finishCoord;
@@ -71,7 +69,6 @@ namespace PathFinding
             newMapSettingsForm.numericUpDown3.Value = CellSize; 
             drawClearMap();
             MapInit();
-            setStatus(Status.Stopped);
             //Status_lbl.DataBindings.Add("Text", this, "(int)pathFindingStatus");
             
             SettingsDGR();
@@ -84,17 +81,6 @@ namespace PathFinding
             Results_dgv.AutoSize = true;
             Results_dgv.ColumnCount = 2;
             
-        }
-        private void setStatus(Status status)
-        {
-            pathFindingStatus = status;
-            if (Status_lbl.InvokeRequired)
-            {
-                SetCallbackText d = new SetCallbackText(setStatus);
-                this.Invoke(d, new object[] { status });
-            }
-            else
-                Status_lbl.Text = status.ToString();
         }
         private void setData(List<Cell> data)
         {
@@ -543,9 +529,6 @@ namespace PathFinding
         {
             
             Run_btn.Enabled = true;
-            Pause_btn.Enabled = false;
-            Stop_btn.Enabled = false;
-            setStatus(Status.Stopped);
 
             if (pathFinder != null)
                 pathFinder.StopTheSearch = true;
@@ -553,9 +536,7 @@ namespace PathFinding
 
         private void Pause_btn_Click(object sender, EventArgs e)
         {
-            Pause_btn.Enabled = !Pause_btn.Enabled;
             Run_btn.Enabled = true;
-            setStatus(Status.Paused);
             if (pathFinder != null)
                pathFinder.PauseTheSearch = !pathFinder.PauseTheSearch;
         }
@@ -569,16 +550,7 @@ namespace PathFinding
                 return;
             }
             Run_btn.Enabled = false;
-            Stop_btn.Enabled = true;
-            Pause_btn.Enabled = true;
             setData(new List<Cell> { nullCell });
-            if (pathFindingStatus == Status.Paused)
-            {
-                pathFinder.PauseTheSearch = false;
-                setStatus(Status.Running);
-                return;
-            }
-            setStatus(Status.Running);
             // Проверяем, не обновлялись ли стоимости прохода после прорисовки карты :
             SetNewCoasts();
             // оОбнуляем массив изменений стоимости прохода :
@@ -587,11 +559,8 @@ namespace PathFinding
             // Если поиск не был ниразу запущен, карту НЕ перерисовываем:
             if (!isOnceRunned)
                 isOnceRunned = true;
-            
-            int waitTimeOut = 0;
-            if (checkBox1.Checked)  waitTimeOut = (int)numericUpDown1.Value ;
 
-            pathFinder = new PathFinder(start, finish, map, algorithm, waitTimeOut);
+            pathFinder = new PathFinder(start, finish, map, algorithm);
 
             pathFinder.PointCheked += new PointHandler(pathFinder_PointCheked);
             pathFinder.PopBestPointFromOpenList += new ListHandler(pathFinder_PopBestPointFromOpenList);
@@ -625,15 +594,12 @@ namespace PathFinding
 
             if (args.IsFinded)
             {
-                SetButtonCondition(Pause_btn, false);
-                SetButtonCondition(Stop_btn, false);
                 setData(args.Path);
             }
             else
                 setData(new List<Cell> { nullCell });
             
             Console.WriteLine(args.message);
-            setStatus(Status.Stopped);
         }
 
         void pathFinder_PathPoint(object sender, PointEventArgs args)
@@ -655,6 +621,7 @@ namespace PathFinding
         {
             drawRect(args.parent, Color.Black);
         }
+
         // При обработке точки отрисовывает стреклу, указывающкю направление от род. точки к обрабатываемой:
         void pathFinder_PointCheked(object sender, PointEventArgs args)
         {

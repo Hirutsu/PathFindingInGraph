@@ -50,3 +50,13 @@ I:\git\CSharp\PathFinding1\obj\x86\Debug\PathFinding.csproj.GenerateResource.cac
 I:\git\CSharp\PathFinding1\obj\x86\Debug\PathFinding.csproj.CoreCompileInputs.cache
 I:\git\CSharp\PathFinding1\obj\x86\Debug\PathFinding.exe
 I:\git\CSharp\PathFinding1\obj\x86\Debug\PathFinding.pdb
+I:\git\PathFindingInGraph\bin\Debug\PathFinding.exe
+I:\git\PathFindingInGraph\bin\Debug\PathFinding.pdb
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.csprojAssemblyReference.cache
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.Form1.resources
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.NewMapSettings.resources
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.Properties.Resources.resources
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.csproj.GenerateResource.cache
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.csproj.CoreCompileInputs.cache
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.exe
+I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.pdb
