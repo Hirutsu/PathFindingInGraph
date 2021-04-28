@@ -14,18 +14,21 @@ namespace PathFinding
         Lava,
         Sands
     }
+
     enum AlgType : byte
     {
         BestFirst,
         Dijkstra,
         AStar
     }
+
     struct Cell
     {
         public int xIndex;
         public int yIndex;
 
         public Cell(int x, int y) { xIndex = x; yIndex = y; }
+
         public static Cell operator +(Cell cl1, Cell cl2)
         {
             Cell result = new Cell();
@@ -37,14 +40,17 @@ namespace PathFinding
         {
             return (cl1.xIndex == cl2.xIndex) && (cl1.yIndex == cl2.yIndex);
         }
+
         public static bool operator !=(Cell cl1, Cell cl2)
         {
             return !(cl1 == cl2);
         }
+
         public static explicit operator string(Cell cl)
         {
             return cl.xIndex + " " + cl.yIndex;
         }
+
         public static explicit operator Cell(string str)
         {
             char[] separator = { ' ' };
@@ -54,6 +60,7 @@ namespace PathFinding
             result.yIndex = Convert.ToInt32(data[1]);
             return result;
         }
+
     }
 
     struct Map
@@ -64,10 +71,12 @@ namespace PathFinding
         public int fValue;
         public int StepCoast;
         public tType type;
+
         public static explicit operator string(Map map)
         {
             return (string)map.cell + " " + map.StepCoast + " " + (int)map.type;
         }
+
         public static explicit operator Map(string str)
         {
             char[] separator = { ' ' };
@@ -84,7 +93,6 @@ namespace PathFinding
     
     struct GrInfo
     {
-        public bool terrTypeWasUsed,
-            terrCoastWasChanged;
+        public bool terrTypeWasUsed,terrCoastWasChanged;
     }
 }

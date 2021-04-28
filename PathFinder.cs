@@ -10,6 +10,7 @@ namespace PathFinding
     delegate void PointHandler(object sender, PointEventArgs args);
     delegate void ListHandler(object sender, ListEventArgs args);
     delegate void SearchResultHandler(object sender, SearchHandlerArgs args); 
+
     class ListEventArgs : EventArgs
     {
         public Cell parent;
@@ -18,6 +19,7 @@ namespace PathFinding
             this.parent = parent;
         }
     }
+
     class PointEventArgs : ListEventArgs
     {
         public Cell succesor;
@@ -25,7 +27,8 @@ namespace PathFinding
         {
            this.succesor = succesor;
         }
-   }
+    }
+
     class SearchHandlerArgs : EventArgs
     {
         public List<Cell> Path;
@@ -39,31 +42,20 @@ namespace PathFinding
             this.IsFinded = IsFinded;
         }
     }
-   class PathFinder
+
+    class PathFinder
     {
-        // Свойства управления выполнением потока:
-       public bool PauseTheSearch { set;  get; }
-       public bool StopTheSearch { set;  get; }
-       public bool PFThreadIsAlive
-       {
-           get
-           {
-                return searchingThread.IsAlive;
-           }
-       }
         Cell nullPoint = new Cell(-1, -1);
         List<Map> OpenList ;
         List<Map> CloseList ;
         Cell start, finish;
         Map[,] map;
         AlgType algorithm;   // тип используемого алгоритма
-        int waitTimeOut;     // задержка при расчётах. 
         public List<Cell> path;
         private Thread searchingThread;
         public PathFinder() { }
         public PathFinder(Cell start, Cell finish, Map[,] map, AlgType algorithm)
         {
-            
             OpenList = new List<Map>(100);
             CloseList = new List<Map>(100);
             this.start = start;
@@ -75,17 +67,12 @@ namespace PathFinding
             searchingThread.Start();
         }
 
-       
         public event PointHandler PointCheked;
         public event PointHandler PathPoint;
         public event ListHandler PopBestPointFromOpenList;
         public event ListHandler PointAddedInOpenList;
         public event ListHandler PointAddedInCloseList;
-       /// <summary>
-       /// Событие, наступающее по окончании поиска
-       /// </summary>
         public event SearchResultHandler SearchFinished;
- 
 
         void Run()
         {
@@ -157,6 +144,7 @@ namespace PathFinding
                  succesors[i].yIndex += cell.yIndex;
              }
         }
+
         private void addToOpenList(Map mPoint)
         {
             OpenList.Add(mPoint);
@@ -172,15 +160,15 @@ namespace PathFinding
                 PointAddedInCloseList(this, new ListEventArgs(mPoint.cell));
 
         }
+
         private bool GetPath( )
         {
-            
             int ListCap = Math.Abs(start.xIndex-finish.xIndex) + Math.Abs(start.yIndex - finish.yIndex);
-            
             Cell p = new Cell(start.xIndex, start.yIndex);
             Cell pTemp = p;
             map[p.xIndex, p.yIndex].cell = p;
             map[p.xIndex, p.yIndex].gValue = 0;
+
             if (algorithm == AlgType.Dijkstra)
                 map[p.xIndex, p.yIndex].fValue = 0;
             else
@@ -198,9 +186,7 @@ namespace PathFinding
                 if (p == finish)
                 {
                     //Конструируем путь:
-                    //Console.WriteLine("Path finded!");
                     path = new List<Cell>(ListCap);
-                   
                     path.Add(finish);
                     Cell s = map[p.xIndex, p.yIndex].parent;
                     while (s != start)
@@ -228,39 +214,30 @@ namespace PathFinding
                 for (int i = 0; i < 8; i++)
                 {
                     byte[] diagCoast =  {10,14};
-                    
                     int x = succesors[i].xIndex;
                     int y = succesors[i].yIndex;
                     // Если препятствие стена - пропускаем точку:
                     if (map[x,y].StepCoast == -1) continue;
-                    Thread.Sleep(waitTimeOut);
-                    if (StopTheSearch == true) return false;
-                    while (PauseTheSearch == true)
-                    {
-                        Thread.Sleep(200);
-                        if (StopTheSearch == true) return false;
-                    }
 
-                  switch (algorithm)
-                   {
-                       case AlgType.BestFirst:
-                           {
-                               if (isPointInCloseList(succesors[i], OpenList) || isPointInOpenList(succesors[i], CloseList))
-                                   continue;
-                               map[x, y].fValue = Heruistic(succesors[i], finish);
-                               break;
-                           }
-                       case AlgType.Dijkstra:
-                           {
+                    switch (algorithm)
+                    {
+                        case AlgType.BestFirst:
+                            {
+                                if(isPointInCloseList(succesors[i], OpenList) || isPointInOpenList(succesors[i], CloseList))
+                                    continue;
+                                map[x, y].fValue = Heruistic(succesors[i], finish);
+                                break;
+                            }
+                        case AlgType.Dijkstra:
+                            {
                                //Считаем диагональный шаг дороже ортогонального в 1.4:
                                int newG = map[p.xIndex, p.yIndex].fValue + (diagCoast[i % 2]) * map[x, y].StepCoast;
-                               if (((isPointInCloseList(succesors[i], OpenList)) || (isPointInOpenList(succesors[i], CloseList)))
-                                   && (map[x, y].fValue <= newG))
+                               if (((isPointInCloseList(succesors[i], OpenList)) || (isPointInOpenList(succesors[i], CloseList)))&& (map[x, y].fValue <= newG))
                                    continue;
                                map[x, y].fValue = newG ;
                                break;
-                           }
-                       case AlgType.AStar:
+                            }
+                        case AlgType.AStar:
                            {
                                int newG = map[p.xIndex, p.yIndex].gValue + (diagCoast[i % 2]) * map[x, y].StepCoast;
                                if (((isPointInCloseList(succesors[i], OpenList)) || (isPointInOpenList(succesors[i], CloseList)))
@@ -270,25 +247,27 @@ namespace PathFinding
                                map[x, y].fValue = newG + Heruistic(succesors[i], finish);
                                break;
                            }
-                  }
-                  map[x, y].parent = p;
-                  if (isPointInCloseList(succesors[i], CloseList))
-                      removeFromCloseList(succesors[i]);
+                    }
 
-                  if (!isPointInOpenList(succesors[i], OpenList))
-                  {
-                      map[x, y].cell = succesors[i];
-                      if (PointCheked != null)
-                          PointCheked(this, new PointEventArgs(p, succesors[i]));
-                      addToOpenList(map[x, y]);
-                  }
+                    map[x, y].parent = p;
+
+                    if(isPointInCloseList(succesors[i], CloseList))
+                        removeFromCloseList(succesors[i]);
+
+                      if (!isPointInOpenList(succesors[i], OpenList))
+                      {
+                          map[x, y].cell = succesors[i];
+                          if (PointCheked != null)
+                              PointCheked(this, new PointEventArgs(p, succesors[i]));
+                          addToOpenList(map[x, y]);
+                      }
                 }
-               
-                    map[p.xIndex, p.yIndex].cell = p;
-                    addToCloseList(map[p.xIndex, p.yIndex]);
-                    pTemp = p;
+                map[p.xIndex, p.yIndex].cell = p;
+                addToCloseList(map[p.xIndex, p.yIndex]);
+                pTemp = p;
             }
             path = new List<Cell>(){nullPoint};
+
             if (SearchFinished != null)
                 SearchFinished(this, new SearchHandlerArgs(path, "Where is no way finded!",false));
             return false;

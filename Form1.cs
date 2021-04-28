@@ -14,26 +14,15 @@ namespace PathFinding
 {
     public partial class Form1 : Form
     {
-        #region Callback's
         delegate void SetCallback(Cell cl1, Cell cl2, float penWidth);
         delegate void SetCallbackList(Cell cl, Color c);
         delegate void SetCallbackButtonCondition(Button btn, bool condition);
         delegate void SetCallbackData(List<Cell> path);
-        #endregion
-        //Форма с установками параметров новой карты :
-        private NewMapSettings newMapSettingsForm = new NewMapSettings();
 
-        // Тип используемого алгоритма:
-        AlgType algorithm = 0;
-        // Переменная используется для стирания резульtатов поиска 
-        // если снова нажимается Run без перерисовки карты(создания новой или стирания карты) :
-        private bool isOnceRunned;
-        
-        // Массив (6 элементов для каждого типа территории) структуры, содержащей две булевские переменные.
-        // Используется вслучае изменения стоимости прохода по территории, если
-        // территория была нарисована до этого изменения. 
-        private GrInfo[] grInfo;
-        
+        private NewMapSettings newMapSettingsForm = new NewMapSettings();//Форма с установками параметров новой карты :
+        AlgType algorithm = 0;//Тип используемого алгоритма 
+        private GrInfo[] grInfo;//измнение стоимости клетки
+
         private byte labelColorIndex;
         // Для start и finish используются координаты в клетках, а не в пикселях!
         // Т.е. фактически это индексы элемента массива.
@@ -55,12 +44,9 @@ namespace PathFinding
             MapHeight = 5;
             CellSize = 15;
             grInfo = new GrInfo[6];
-            
             nullCell = new Cell(0, 0); 
-            InitializeComponent();
-            openFileDialog1.InitialDirectory = saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
-            
-            label16.BackColor = label1.BackColor;
+            InitializeComponent(); 
+            PicSelectType.BackColor = Pic1.BackColor;
             AddOwnedForm(newMapSettingsForm);
             pictureBox1.Width = MapWidth * (CellSize + 1) + 1;
             pictureBox1.Height = MapHeight * (CellSize + 1) + 1;
@@ -69,19 +55,9 @@ namespace PathFinding
             newMapSettingsForm.numericUpDown3.Value = CellSize; 
             drawClearMap();
             MapInit();
-            //Status_lbl.DataBindings.Add("Text", this, "(int)pathFindingStatus");
-            
-            SettingsDGR();
-         }
-
-        #region Functions
-        private void SettingsDGR()
-        {
-            Results_dgv.TopLeftHeaderCell.Value = "№";
-            Results_dgv.AutoSize = true;
-            Results_dgv.ColumnCount = 2;
-            
         }
+
+        //
         private void setData(List<Cell> data)
         {
             if (Results_dgv.InvokeRequired)
@@ -91,7 +67,6 @@ namespace PathFinding
             }
             else
             {
-                //Results_dgv.DataSource = data;
                 Results_dgv.RowCount = data.Count;
 
                 int i = 0;
@@ -100,14 +75,11 @@ namespace PathFinding
                     Results_dgv[0, i].Value = c.xIndex;
                     Results_dgv[1, i].Value = c.yIndex;
                     i++;
-
                 }
             }
         }
         
-        /// <summary>
-        /// Рисует пустую сеточную карту
-        /// </summary>
+        //Обнуление клеточного поля
         private void drawClearMap()
         {
             // Размер карты в пискелях.
@@ -132,6 +104,7 @@ namespace PathFinding
             g.Dispose();
         }
 
+        //инициализация клеточного поля
         private void MapInit()
         {
             // Иниацилизируем массив  пустой карты:
@@ -178,6 +151,8 @@ namespace PathFinding
             finish = nullCell;
             grInfo = new GrInfo[6];
         }
+
+        //Рисование точки начала
         private void drawStart(Point point)
         {
             if (start == nullCell)
@@ -192,7 +167,7 @@ namespace PathFinding
 
         }
 
-        // Параметр передается в пикселях!
+        //Рисование точки конца
         private void drawFinish(Point point)
         {
             if (finish == nullCell)
@@ -205,6 +180,7 @@ namespace PathFinding
             g.FillEllipse(Brushes.Red, rect);
             g.Dispose();
         }
+
         // Заливает клетку, на которую кликнули.
         private void FillRegion(Color color, Point point)
         {
@@ -212,20 +188,14 @@ namespace PathFinding
             //Проверяем цвет кликнутого пикселя:
             Color c = (pictureBox1.Image as Bitmap).GetPixel(point.X, point.Y);
             Graphics g = Graphics.FromImage(pictureBox1.Image);
-            
-            //Если цвет области совпадает с заливочным, выходим:
-            //if (c.ToArgb() == label16.BackColor.ToArgb())
-            //{
-            //    Console.WriteLine(" sovpadenie cvetov!!! ");
-            //    return;
-            //}
-            
+                    
             point.X = point.X - point.X % (CellSize + 1) + 1;
             point.Y = point.Y - point.Y % (CellSize + 1) + 1;
             g.FillRectangle(brush, point.X, point.Y, CellSize, CellSize);
             brush.Dispose();
             g.Dispose();
         }
+
         // Возвращает индекс элемента массива, который определяет точка на карте:
         private Cell GetIndexByPozition(Point point)
         {
@@ -234,17 +204,19 @@ namespace PathFinding
             index.yIndex = (point.Y / (CellSize + 1)) + 1; 
             return index;
         }
+
         // Возвращает стоимость прохода по клетке:
         private int getCurrentCoast()
         {
-            if (label16.BackColor == label1.BackColor) return -1;
-            if (label16.BackColor == label2.BackColor) return (int)numericUpDown2.Value;
-            if (label16.BackColor == label3.BackColor) return (int)numericUpDown3.Value;
-            if (label16.BackColor == label4.BackColor) return (int)numericUpDown4.Value;
-            if (label16.BackColor == label5.BackColor) return (int)numericUpDown5.Value;
-            if (label16.BackColor == label6.BackColor) return (int)numericUpDown6.Value;
+            if (PicSelectType.BackColor == Pic1.BackColor) return -1;
+            if (PicSelectType.BackColor == Pic2.BackColor) return (int)NumericForest.Value;
+            if (PicSelectType.BackColor == Pic3.BackColor) return (int)NumericTaiga.Value;
+            if (PicSelectType.BackColor == Pic4.BackColor) return (int)NumericRoad.Value;
+            if (PicSelectType.BackColor == Pic5.BackColor) return (int)NumericLava.Value;
+            if (PicSelectType.BackColor == Pic6.BackColor) return (int)NumericSand.Value;
             return 1;
         }
+
         // Используется вспомогательным потоком вычислений для отображения результатов:
         private void drawDir(Cell cl1, Cell cl2, float penWidth)
         {
@@ -261,7 +233,6 @@ namespace PathFinding
                 Pen pen = new Pen(Color.Red,penWidth);
                 Point p1 = new Point();
                 Point p2 = new Point();
-                //pen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
                 p1.X = (CellSize + 1) * (cl1.xIndex - 1) + (int)((CellSize + 1) / 2);
                 p1.Y = (CellSize + 1) * (cl1.yIndex - 1) + (int)((CellSize + 1) / 2);
                 
@@ -272,7 +243,8 @@ namespace PathFinding
                 g.Dispose();
                 pictureBox1.Invalidate();
             }
-         }
+        }
+
         // Обозначает рамками на карте точки в open и close списках :
         private void drawRect(Cell cl ,Color c)
         {
@@ -293,127 +265,85 @@ namespace PathFinding
                 pen.Dispose();
                 g.Dispose();
             }
-
         }
-        // Итак, если изменения стоимости прохода были произведены после отрисовки соответствующих
-        // типов территории, перед запуском поиска и перед сохранением карты необходимо внести 
-        // соответствующие изменения в массив карты.(прописать новую стоимость)
+
+        //Задать стоимость стоимости клеток
         private void SetNewCoasts()
         {
             // Если после рисования препятствий стоимость не менялась, выходим:
-           if ( (!grInfo[1].terrCoastWasChanged ) && (!grInfo[2].terrCoastWasChanged ) 
-               && (!grInfo[3].terrCoastWasChanged ) && (!grInfo[4].terrCoastWasChanged )
-               && (!grInfo[5].terrCoastWasChanged ) )
-               return;
-           NumericUpDown temp;  
-           for (int i = 1; i <= MapWidth; i++)
+            if ( (!grInfo[1].terrCoastWasChanged ) && (!grInfo[2].terrCoastWasChanged ) && (!grInfo[3].terrCoastWasChanged ) && (!grInfo[4].terrCoastWasChanged )&& (!grInfo[5].terrCoastWasChanged ) )
+                return;
+            NumericUpDown temp;
+
+            for (int i = 1; i <= MapWidth; i++)
+            {
                 for (int j = 1; j <= MapHeight; j++)
                 {
-                    byte typeIndex = (byte)map[i,j].type;
-                    if (grInfo[ typeIndex ].terrCoastWasChanged)
+                    byte typeIndex = (byte)map[i, j].type;
+                    if (grInfo[typeIndex].terrCoastWasChanged)
                     {
-                        temp = groupBox3.Controls["numericUpDown" + (typeIndex + 1)] as NumericUpDown;
+                        temp = MenuCell.Controls["numericUpDown" + (typeIndex + 1)] as NumericUpDown;
                         map[i, j].StepCoast = (int)temp.Value;
-
-                        //switch (typeIndex)
-                        //{
-                        //    case 1:
-                        //        map[i, j].StepCoast = (int)numericUpDown2.Value;
-                        //        break;
-                        //    case 2:
-                        //        map[i, j].StepCoast = (int)numericUpDown3.Value;
-                        //        break;
-                        //    case 3:
-                        //        map[i, j].StepCoast = (int)numericUpDown4.Value;
-                        //        break;
-                        //    case 4:
-                        //        map[i, j].StepCoast = (int)numericUpDown5.Value;
-                        //        break;
-                        //    case 5:
-                        //        map[i, j].StepCoast = (int)numericUpDown6.Value;
-                        //        break;
-                        //}
                     }
-                        
+
                 }
+            }
         }
 
-        #endregion
-
-        #region Handlers
-
-        #region NotInteresting
-       
-        //Clear Map button :
+        //Очищение карты
         private void button5_Click(object sender, EventArgs e)  
         {
             drawClearMap();
             MapInit();
         }
 
-        private void label1_Click(object sender, EventArgs e) // Wall type of tile, Color Navy.
+        //выбор типа клетки
+        private void SelectCell_Click(object sender, EventArgs e) // Wall type of tile, Color Navy.
         {
             int i = (sender as Label).TabIndex + 1;
-            label16.BackColor = groupBox3.Controls["label" + i].BackColor;
-            label16.Text = "";
+            PicSelectType.BackColor = MenuCell.Controls["Pic" + i].BackColor;
+            PicSelectType.Text = "";
             labelColorIndex = (byte)(i - 1);
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        //выбор стартовый клетки
+        private void SelectStartCell_Click(object sender, EventArgs e)
         {
-            label16.BackColor = Color.White;
-            label16.ForeColor = Color.Black;
-            label16.Font = new Font("Verdana", 8, FontStyle.Bold);
-            label16.Text = "S";
+            PicSelectType.BackColor = Color.White;
+            PicSelectType.ForeColor = Color.Black;
+            PicSelectType.Font = new Font("Verdana", 8, FontStyle.Bold);
+            PicSelectType.Text = "S";
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        //выбор конечной клетки
+        private void SelectEndCell_Click(object sender, EventArgs e)
         {
-            label16.BackColor = Color.Black;
-            label16.ForeColor = Color.White;
-            label16.Font = new Font("Verdana", 8, FontStyle.Bold);
-            label16.Text = "F";
+            PicSelectType.BackColor = Color.Black;
+            PicSelectType.ForeColor = Color.White;
+            PicSelectType.Font = new Font("Verdana", 8, FontStyle.Bold);
+            PicSelectType.Text = "F";
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        //выбор алгортимов поиска
+        private void SelectAlgorithm(object sender, EventArgs e)
         {
             RadioButton rb = sender as RadioButton;
             if (!rb.Checked)
                 return;
             algorithm = (AlgType)rb.TabIndex;
         }
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+
+        //выбор стоимости поля
+        private void NumericValueChanged(object sender, EventArgs e)
         {
             NumericUpDown nud = sender as NumericUpDown;
-            int index = nud.TabIndex - 15;
+            int index = nud.TabIndex - 1;
             if (grInfo[index].terrTypeWasUsed)
                 grInfo[index].terrCoastWasChanged = true;
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (MessageBox.Show(" Sure ?", " Exit programm ", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-               // Передаём пасфайндеру команду на выход из метода:
-                if (pathFinder != null)
-                {
-                    pathFinder.StopTheSearch = true;
-                    pathFinder_SearchFinished(pathFinder, new SearchHandlerArgs());
-                    // В ответ ожидаем завершения рабочего потока:
-                    Application.DoEvents();
-                    int n = 0;
-                    while ((pathFinder.PFThreadIsAlive == true) && (n < 10))
-                    {
-                        n++;
-                        Thread.Sleep(300);
-                    }
-                }
-            }
-            else
-                e.Cancel = true;
-        }
-
-        private void ViewResults_btn_Click(object sender, EventArgs e)
+        //просмотр пройденного пути
+        private void ViewResults(object sender, EventArgs e)
         {
             Results_pnl.Visible = !Results_pnl.Visible;
             if (Results_pnl.Visible)
@@ -422,30 +352,17 @@ namespace PathFinding
                 (sender as Button).Text = "View results ";
         }
 
-        #endregion
-
-        #region MouseHandles
-        Point startScrPoint;
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                Cursor = Cursors.Hand;
-                startScrPoint = e.Location;
-            }
-
-        }
-
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        //рисование типов клеток
+        private void PaintCellFromType(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 Cell p = GetIndexByPozition(e.Location);
-                switch (label16.Text) 
+                switch (PicSelectType.Text) 
                 {
                     case "S" :
                         if (start != nullCell)
-                            FillRegion(label4.BackColor, startCoord);
+                            FillRegion(Pic4.BackColor, startCoord);
                         
                         startCoord = e.Location;
                         start = p;
@@ -457,7 +374,7 @@ namespace PathFinding
                         break;
                     case "F" :
                         if (finish != nullCell)
-                           FillRegion(label4.BackColor, finishCoord);
+                           FillRegion(Pic4.BackColor, finishCoord);
                         finishCoord = e.Location;
                         finish = p;
                         drawFinish(finishCoord);
@@ -467,7 +384,7 @@ namespace PathFinding
                         }
                         break;
                     case "" :
-                        FillRegion(label16.BackColor,e.Location);
+                        FillRegion(PicSelectType.BackColor,e.Location);
                         map[p.xIndex, p.yIndex].type = (tType)labelColorIndex;
                         grInfo[labelColorIndex].terrTypeWasUsed = true;
                         break;
@@ -479,159 +396,69 @@ namespace PathFinding
             
         }
 
-        bool stopper = true;
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                if ((label16.Text == "S") || (label16.Text == "F")) return;
-                FillRegion(label16.BackColor, e.Location);
-                pictureBox1.Invalidate();
-
-                Cell p = GetIndexByPozition(e.Location);
-                map[p.xIndex, p.yIndex].StepCoast = getCurrentCoast();
-                map[p.xIndex, p.yIndex].type = (tType)labelColorIndex;
-                grInfo[labelColorIndex].terrTypeWasUsed = true;
-            }           
-            // Навигация по карте с помощью мыши:
-            if (e.Button == MouseButtons.Right) 
-            {
-                if (stopper)
-                {
-                    Point p = panel1.AutoScrollPosition;
-                    
-                    p.X = -p.X;
-                    p.Y = -p.Y;
-                    //p.X += e.Location.X - startScrPoint.X;
-                    //p.Y += e.Location.Y - startScrPoint.Y;
-
-                    p.X += -e.Location.X + startScrPoint.X;
-                    p.Y += -e.Location.Y + startScrPoint.Y;
-                              
-                    panel1.AutoScrollPosition = p;
-                    startScrPoint = e.Location;
-                    stopper = false;
-                 }
-                 else stopper=true;
-                startScrPoint = e.Location;
-             }
-            
-        }
-
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-        {
-            Cursor = Cursors.Default;
-        }
-#endregion
-
-        #region RunStopPause buttons Handlers
-        private void Stop_btn_Click(object sender, EventArgs e)
-        {
-            
-            Run_btn.Enabled = true;
-
-            if (pathFinder != null)
-                pathFinder.StopTheSearch = true;
-        }
-
-        private void Pause_btn_Click(object sender, EventArgs e)
-        {
-            Run_btn.Enabled = true;
-            if (pathFinder != null)
-               pathFinder.PauseTheSearch = !pathFinder.PauseTheSearch;
-        }
-        
-        // Кнопка RUN
-        private void button9_Click(object sender, EventArgs e)
+        // Кнопка старта поиска кратчайшего пути
+        private void RunPathFind(object sender, EventArgs e)
         {
             if (start == nullCell || finish == nullCell )
             {
                 MessageBox.Show("You must define START and FINISH points both!","Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            Run_btn.Enabled = false;
             setData(new List<Cell> { nullCell });
             // Проверяем, не обновлялись ли стоимости прохода после прорисовки карты :
             SetNewCoasts();
             // оОбнуляем массив изменений стоимости прохода :
             for (int i = 0; i < grInfo.Length; i++)
                 grInfo[i].terrCoastWasChanged = false;
-            // Если поиск не был ниразу запущен, карту НЕ перерисовываем:
-            if (!isOnceRunned)
-                isOnceRunned = true;
 
-            pathFinder = new PathFinder(start, finish, map, algorithm);
-
-            pathFinder.PointCheked += new PointHandler(pathFinder_PointCheked);
+            pathFinder = new PathFinder(start, finish, map, algorithm);//создание pathFinder
+            pathFinder.PointCheked += new PointHandler(pathFinder_PointCheked);//отрисовка от родителя к потомку
             pathFinder.PopBestPointFromOpenList += new ListHandler(pathFinder_PopBestPointFromOpenList);
-            pathFinder.PointAddedInOpenList += new ListHandler(pathFinder_PointAddedInOpenList);
-            pathFinder.PathPoint += new PointHandler(pathFinder_PathPoint);
-            // Обработчик окончания поиска пути:
-            pathFinder.SearchFinished += new SearchResultHandler(pathFinder_SearchFinished);
-      
-        }
-        /// <summary>
-        /// Из дочернего потока устанавливает свойство enabled кнопок .
-        /// </summary>
-        /// <param name="btn"></param>
-        /// <param name="condition"></param>
-        void SetButtonCondition(Button btn, bool condition)
-        {
-            if (btn.InvokeRequired)
-            {
-                SetCallbackButtonCondition d = new SetCallbackButtonCondition(SetButtonCondition);
-                this.Invoke(d, new object[] { btn, condition });
-            }
-            else
-                btn.Enabled = condition;
-        }
-        #endregion
+            pathFinder.PointAddedInOpenList += new ListHandler(pathFinder_PointAddedInOpenList);//добавление в закрытый список
+            pathFinder.PathPoint += new PointHandler(pathFinder_PathPoint);//отрисовка кратчайшего пути
+            pathFinder.SearchFinished += new SearchResultHandler(pathFinder_SearchFinished);// Обработчик окончания поиска пути:
 
-        #region PathFinding Handlers
+        }
+
+        //выстраивание пути для ViewResults
         void pathFinder_SearchFinished(object sender, SearchHandlerArgs args)
         {
-            if (!Run_btn.Enabled) SetButtonCondition(Run_btn, true);
-
             if (args.IsFinded)
             {
                 setData(args.Path);
             }
             else
+            {
                 setData(new List<Cell> { nullCell });
-            
-            Console.WriteLine(args.message);
+            }
         }
 
+        //отрисовка кратчайшего пути
         void pathFinder_PathPoint(object sender, PointEventArgs args)
         {
             drawDir(args.parent, args.succesor, 2);
         }
 
+        //добавление в закрытый список
         void pathFinder_PointAddedInCloseList(object sender, ListEventArgs args)
         {
             drawRect(args.parent, Color.Black);
         }
 
+        //добавление в открытый список
         void pathFinder_PointAddedInOpenList(object sender, ListEventArgs args)
         {
             drawRect(args.parent, Color.LightGreen);
         }
-           
-        void pathFinder_PopBestPointFromOpenList(object sender, ListEventArgs args)
-        {
-            drawRect(args.parent, Color.Black);
-        }
-
-        // При обработке точки отрисовывает стреклу, указывающкю направление от род. точки к обрабатываемой:
+        
+        //при обработке точки отрисовывает стреклу, указывающкю направление от род. точки к обрабатываемой:
         void pathFinder_PointCheked(object sender, PointEventArgs args)
         {
             drawDir(args.parent, args.succesor, 1);
         }
-        #endregion
 
-        #region MenuStrip
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        //создание новой мапы
+        private void SetMap(object sender, EventArgs e)
         {
             newMapSettingsForm.ActiveControl = newMapSettingsForm.numericUpDown1;
             if (newMapSettingsForm.ShowDialog() == DialogResult.OK)
@@ -643,8 +470,11 @@ namespace PathFinding
                 MapInit();
             }
         }
-        #endregion
 
-        #endregion
+        //
+        void pathFinder_PopBestPointFromOpenList(object sender, ListEventArgs args)
+        {
+            drawRect(args.parent, Color.Black);
+        }
    }
 }
