@@ -60,3 +60,12 @@ I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.csproj.GenerateResource.cach
 I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.csproj.CoreCompileInputs.cache
 I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.exe
 I:\git\PathFindingInGraph\obj\x86\Debug\PathFinding.pdb
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\bin\Debug\PathFinding.exe
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\bin\Debug\PathFinding.pdb
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.csprojAssemblyReference.cache
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.Form1.resources
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.NewMapSettings.resources
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.Properties.Resources.resources
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.csproj.GenerateResource.cache
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.exe
+C:\Users\burchuladzela\Desktop\PathFindingInGraph\obj\x86\Debug\PathFinding.pdb

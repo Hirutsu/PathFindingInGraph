@@ -399,9 +399,11 @@ namespace PathFinding
         // Кнопка старта поиска кратчайшего пути
         private void RunPathFind(object sender, EventArgs e)
         {
+            ButtonRun.Enabled = false;
             if (start == nullCell || finish == nullCell )
             {
                 MessageBox.Show("You must define START and FINISH points both!","Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ButtonRun.Enabled = true;
                 return;
             }
             setData(new List<Cell> { nullCell });
@@ -417,7 +419,6 @@ namespace PathFinding
             pathFinder.PointAddedInOpenList += new ListHandler(pathFinder_PointAddedInOpenList);//добавление в закрытый список
             pathFinder.PathPoint += new PointHandler(pathFinder_PathPoint);//отрисовка кратчайшего пути
             pathFinder.SearchFinished += new SearchResultHandler(pathFinder_SearchFinished);// Обработчик окончания поиска пути:
-
         }
 
         //выстраивание пути для ViewResults

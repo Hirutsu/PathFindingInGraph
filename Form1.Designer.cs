@@ -58,7 +58,7 @@
             this.Pic3 = new System.Windows.Forms.Label();
             this.Pic2 = new System.Windows.Forms.Label();
             this.Pic1 = new System.Windows.Forms.Label();
-            this.Run_btn = new System.Windows.Forms.Button();
+            this.ButtonRun = new System.Windows.Forms.Button();
             this.ViewResults_btn = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -547,17 +547,17 @@
             this.Pic1.TabIndex = 0;
             this.Pic1.Click += new System.EventHandler(this.SelectCell_Click);
             // 
-            // Run_btn
+            // ButtonRun
             // 
-            this.Run_btn.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Run_btn.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.Run_btn.Location = new System.Drawing.Point(97, 65);
-            this.Run_btn.Name = "Run_btn";
-            this.Run_btn.Size = new System.Drawing.Size(83, 40);
-            this.Run_btn.TabIndex = 0;
-            this.Run_btn.Text = "ПУСК";
-            this.Run_btn.UseVisualStyleBackColor = true;
-            this.Run_btn.Click += new System.EventHandler(this.RunPathFind);
+            this.ButtonRun.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.ButtonRun.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.ButtonRun.Location = new System.Drawing.Point(97, 65);
+            this.ButtonRun.Name = "ButtonRun";
+            this.ButtonRun.Size = new System.Drawing.Size(83, 40);
+            this.ButtonRun.TabIndex = 0;
+            this.ButtonRun.Text = "ПУСК";
+            this.ButtonRun.UseVisualStyleBackColor = true;
+            this.ButtonRun.Click += new System.EventHandler(this.RunPathFind);
             // 
             // ViewResults_btn
             // 
@@ -672,7 +672,7 @@
             this.ClientSize = new System.Drawing.Size(853, 513);
             this.Controls.Add(this.Results_pnl);
             this.Controls.Add(this.ViewResults_btn);
-            this.Controls.Add(this.Run_btn);
+            this.Controls.Add(this.ButtonRun);
             this.Controls.Add(this.MenuCell);
             this.Controls.Add(this.Algorithms);
             this.Controls.Add(this.panel1);
@@ -731,7 +731,7 @@
         private System.Windows.Forms.Button ButtonClearMap;
         private System.Windows.Forms.Button ButtonEndCell;
         private System.Windows.Forms.Button ButtonStartCell;
-        private System.Windows.Forms.Button Run_btn;
+        private System.Windows.Forms.Button ButtonRun;
         private System.Windows.Forms.RadioButton AStar;
         private System.Windows.Forms.Button ViewResults_btn;
         private System.Windows.Forms.MenuStrip menuStrip1;

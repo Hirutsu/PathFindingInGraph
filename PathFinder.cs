@@ -63,7 +63,6 @@ namespace PathFinding
             this.map = map;
             this.algorithm = algorithm;
             searchingThread = new Thread(this.Run);
-            searchingThread.Name = "Path searching thread";
             searchingThread.Start();
         }
 
@@ -74,11 +73,14 @@ namespace PathFinding
         public event ListHandler PointAddedInCloseList;
         public event SearchResultHandler SearchFinished;
 
+
+        //Запуск поиска кратчайшего пути
         void Run()
         {
             GetPath();
         }
 
+        //евристика для просчета длины между клетками
         private int Heruistic(Cell p1, Cell p2)
         {
             int dx =  Math.Abs (p1.xIndex - p2.xIndex);
@@ -87,6 +89,7 @@ namespace PathFinding
             return 10 * Math.Abs(dx-dy) + 14 * Math.Min(dx, dy);  
         }
 
+        //Извлечение из открытого списка точку с наименьшей общей стоимость прохода до финиша
         private Cell popMinFromOpen(List<Map> OpenList)
         {
             
@@ -104,6 +107,7 @@ namespace PathFinding
                 return nullPoint;
         }
 
+        //проверка на то что клетка в открытом списке
         private bool isPointInOpenList(Cell cell, List<Map> OpenList)
         {
             foreach (Map m in OpenList)
@@ -111,6 +115,7 @@ namespace PathFinding
             return false;
         }
 
+        //проверка на то что клетка в закрытом списке
         private bool isPointInCloseList(Cell cell, List<Map> CloseList)
         {
             foreach (Map m in CloseList)
@@ -118,6 +123,7 @@ namespace PathFinding
             return false;
         }
 
+        //удалить из открытого списка
         private void removeFromOpenList(Cell p)
         {
             for (int i = 0; i < OpenList.Count; i++)
@@ -126,6 +132,7 @@ namespace PathFinding
                     OpenList.Remove(OpenList[i]);
         }
 
+        //удалить из закрытого списка
         private void removeFromCloseList(Cell p)
         {
             for (int i = 0; i < CloseList.Count; i++)
@@ -144,7 +151,7 @@ namespace PathFinding
                  succesors[i].yIndex += cell.yIndex;
              }
         }
-
+        //добавление в открытый список
         private void addToOpenList(Map mPoint)
         {
             OpenList.Add(mPoint);
@@ -152,6 +159,7 @@ namespace PathFinding
                 PointAddedInOpenList(this, new ListEventArgs(mPoint.cell));
         }
 
+        //добавление в закрытый список
         private void addToCloseList(Map mPoint)
         {
             CloseList.Add(mPoint);
@@ -161,6 +169,7 @@ namespace PathFinding
 
         }
 
+        //получение пути
         private bool GetPath( )
         {
             int ListCap = Math.Abs(start.xIndex-finish.xIndex) + Math.Abs(start.yIndex - finish.yIndex);
@@ -267,7 +276,6 @@ namespace PathFinding
                 pTemp = p;
             }
             path = new List<Cell>(){nullPoint};
-
             if (SearchFinished != null)
                 SearchFinished(this, new SearchHandlerArgs(path, "Where is no way finded!",false));
             return false;
