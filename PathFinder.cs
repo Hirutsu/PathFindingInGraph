@@ -51,10 +51,11 @@ namespace PathFinding
         Cell start, finish;
         Map[,] map;
         AlgType algorithm;   // тип используемого алгоритма
+        int time;
         public List<Cell> path;
         private Thread searchingThread;
         public PathFinder() { }
-        public PathFinder(Cell start, Cell finish, Map[,] map, AlgType algorithm)
+        public PathFinder(Cell start, Cell finish, Map[,] map, AlgType algorithm,int timeWait)
         {
             OpenList = new List<Map>(100);
             CloseList = new List<Map>(100);
@@ -64,6 +65,7 @@ namespace PathFinding
             this.algorithm = algorithm;
             searchingThread = new Thread(this.Run);
             searchingThread.Start();
+            time = timeWait;
         }
 
         public event PointHandler PointCheked;
@@ -110,6 +112,7 @@ namespace PathFinding
         //проверка на то что клетка в открытом списке
         private bool isPointInOpenList(Cell cell, List<Map> OpenList)
         {
+            Thread.Sleep(Convert.ToInt32(time));
             foreach (Map m in OpenList)
                 if (m.cell == cell) return true;
             return false;
@@ -118,6 +121,7 @@ namespace PathFinding
         //проверка на то что клетка в закрытом списке
         private bool isPointInCloseList(Cell cell, List<Map> CloseList)
         {
+            Thread.Sleep(Convert.ToInt32(time));
             foreach (Map m in CloseList)
                 if (m.cell == cell) return true;
             return false;

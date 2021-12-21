@@ -69,6 +69,7 @@
             this.Y = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Algorithms = new System.Windows.Forms.GroupBox();
             this.Results_pnl = new System.Windows.Forms.Panel();
+            this.timeWait = new System.Windows.Forms.TextBox();
             this.MenuCell.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NumericSand)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NumericLava)).BeginInit();
@@ -665,11 +666,19 @@
             this.Results_pnl.TabIndex = 1;
             this.Results_pnl.Visible = false;
             // 
+            // timeWait
+            // 
+            this.timeWait.Location = new System.Drawing.Point(99, 111);
+            this.timeWait.Name = "timeWait";
+            this.timeWait.Size = new System.Drawing.Size(81, 20);
+            this.timeWait.TabIndex = 10;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(853, 513);
+            this.Controls.Add(this.timeWait);
             this.Controls.Add(this.Results_pnl);
             this.Controls.Add(this.ViewResults_btn);
             this.Controls.Add(this.ButtonRun);
@@ -743,6 +752,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Y;
         private System.Windows.Forms.GroupBox Algorithms;
         private System.Windows.Forms.Panel Results_pnl;
+        private System.Windows.Forms.TextBox timeWait;
     }
 }
 

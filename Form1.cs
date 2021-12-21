@@ -413,7 +413,7 @@ namespace PathFinding
             for (int i = 0; i < grInfo.Length; i++)
                 grInfo[i].terrCoastWasChanged = false;
 
-            pathFinder = new PathFinder(start, finish, map, algorithm);//создание pathFinder
+            pathFinder = new PathFinder(start, finish, map, algorithm,Convert.ToInt32(timeWait.Text));//создание pathFinder
             pathFinder.PointCheked += new PointHandler(pathFinder_PointCheked);//отрисовка от родителя к потомку
             pathFinder.PopBestPointFromOpenList += new ListHandler(pathFinder_PopBestPointFromOpenList);
             pathFinder.PointAddedInOpenList += new ListHandler(pathFinder_PointAddedInOpenList);//добавление в закрытый список
